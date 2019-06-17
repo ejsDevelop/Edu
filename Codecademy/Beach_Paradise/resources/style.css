@@ -1,0 +1,19 @@
+body {
+    font-family: Arial, Helvetica, sans-serif
+}
+
+h1, h2 {
+    color: darkgreen;
+}
+
+h3 {
+    color: seagreen;
+}
+
+p {
+    max-width: 40%;
+}
+
+.flex {
+    display: flex;
+}

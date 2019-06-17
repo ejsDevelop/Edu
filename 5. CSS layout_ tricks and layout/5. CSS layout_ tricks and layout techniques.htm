@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<!-- saved from url=(0038)http://book.mixu.net/css/5-tricks.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>5. CSS layout: tricks and layout techniques</title>
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <script async="" src="./5. CSS layout_ tricks and layout techniques_files/analytics.js"></script><script src="./5. CSS layout_ tricks and layout techniques_files/jquery-1.6.1.min.js"></script>
+    <link type="text/css" rel="stylesheet" href="./5. CSS layout_ tricks and layout techniques_files/style.css">
+    <link type="text/css" rel="stylesheet" href="./5. CSS layout_ tricks and layout techniques_files/assert.css">
+    <link type="text/css" rel="stylesheet" href="./5. CSS layout_ tricks and layout techniques_files/pilcrow.css">
+    <link type="text/css" rel="stylesheet" href="./5. CSS layout_ tricks and layout techniques_files/hljs-github.min.css">
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-26716650-3', 'auto');
+      ga('send', 'pageview');
+
+    </script>
+  </head>
+<body>
+  <div id="wrapper">
+    <div id="header">
+    <h1>Learn CSS Layout</h1>
+    <h2>the pedantic way</h2>
+    </div>
+    <div class="clear">
+      <hr>
+    </div>
+
+    <div id="main">
+      <div id="container">
+        <div id="content" class="post"><h1 id="5-css-layout-tricks-and-layout-techniques"><a class="header-link" href="http://book.mixu.net/css/5-tricks.html#5-css-layout-tricks-and-layout-techniques"></a>5. CSS layout: tricks and layout techniques</h1>
+<p>In this chapter, we'll take a look at how the various CSS layout properties can be used to influence the sizing, positioning and overall layout of a page. I have also included a number of puzzles to help you review the things you have learned in the previous chapters.</p>
+<p>This chapter is organized by use case rather than by property or feature. First, I'll talk about sizing and positioning, then I'll focus on two specific use cases: grid-based layouts and horizontal and vertical centering.</p>
+<h2 id="css-layout-tricks-and-techniques-used-for-sizing"><a class="header-link" href="http://book.mixu.net/css/5-tricks.html#css-layout-tricks-and-techniques-used-for-sizing"></a>CSS layout tricks and techniques used for sizing</h2>
+<p>Sizing-related techniques allow you to define how a particular element should be sized; how it should grow and how it should shrink as the viewport size changes.</p>
+<ul class="list">
+<li>Height transfer</li>
+<li>Forced min-height</li>
+<li>Combining flex and non-flex items</li>
+<li>Sizing with constraints</li>
+</ul>
+<p><em>Height transfer</em>. Unlike basic HTML documents, web applications often want to make use of all of the available space in the viewport while avoiding scrolling. However, a typical HTML document contains several root elements that are <code>display: block</code> by default. If those blocks do not have a specified height, they will simply use the height of their content rather than the height of the viewport. The following snippet forces the <code>html</code> and <code>body</code> tags to take up <code>100%</code> of the viewport height, which then lets you use percentages in subsequent markup to refer to viewport height:</p>
+<pre class="hljs"><code><span class="hljs-tag">html</span>, <span class="hljs-tag">body</span> <span class="hljs-rules">{
+  <span class="hljs-rule"><span class="hljs-attribute">height</span>:<span class="hljs-value"> <span class="hljs-number">100%</span></span></span>;
+}</span></code></pre><p>CSS3 adds the new <code>vh</code> and <code>vw</code> units, which are always relative to viewport height and viewport width, which makes it much easier to size elements relative to viewport size since you no longer need to make every parent in the tree transfer the height of the viewport.</p>
+<p><em>min-height: 100%</em>. It is hard to align something to the bottom of the parent box in CSS 2.1, since boxes are either stacked horizontally left-to-right or vertically top-to-bottom. Setting <code>min-height</code> can ensure that a div that is normally positioned (e.g. that still reacts to normal flow content changes, unlike, say, an absolutely positioned element) is flushed to the bottom of the page.</p>
+<p><em>Combining flex-grow: 0 and flex-grow: 1</em>. Flexbox provides a powerful toolkit for controlling how elements are sized. Philip Walton's <a href="http://philipwalton.github.io/solved-by-flexbox/">Solved by Flexbox</a> covers several additional layouts, but one particular technique I'd like to highlight is using a combination of <code>flex-grow: 0</code> and <code>flex-grow: 1</code> to produce a bottom or top aligned box, such as a footer or a header. The trick is simple: place the main content inside a <code>flex-grow: 1</code> flex item, and place the footer or header in a <code>flex-grow: 0</code> flex item. Assuming the flex parent is sized as a percentage of its parent, the main content container will take up all the space that is left over, pushing the footer to the bottom or leaving the header at the top.</p>
+<p><em>Sizing with constraints</em>. You can make use of the fact that you can fill in a missing value through the constraint-based sizing algorithm for <code>position: absolute</code> elements; this also works for <code>display: block</code> but only for width.</p>
+<p>If you leave the <code>width</code> (and/or <code>height</code> for absolutely positioned elements) property to <code>auto</code>, but set the values for <code>margin</code> explicitly, then the absolutely positioned block will be sized such that it takes up all of the available space except for the space left over for margins.</p>
+<h2 id="css-layout-tricks-and-techniques-used-for-positioning"><a class="header-link" href="http://book.mixu.net/css/5-tricks.html#css-layout-tricks-and-techniques-used-for-positioning"></a>CSS layout tricks and techniques used for positioning</h2>
+<p>Positioning is at the heart of layout: perhaps the most important task is to place elements in the correct relative positions across all screen sizes. The techniques in this section allow you to accomplish that.</p>
+<ul class="list">
+<li>Relative + absolute positioning</li>
+<li>Negative margins</li>
+<li>Transforms</li>
+<li><code>margin: auto</code></li>
+<li>Positioning with constraints</li>
+</ul>
+<p><em>Relative + absolute positioning</em>. <code>position: absolute</code> is powerful because you can align elements at an offset from the top, bottom, left or right sides of their parent box. However, in most cases, you don't actually want to  position a div relative to the viewport - you want it to be positioned relative to particular parent.</p>
+<p>You can use a combination of <code>position: relative</code> and <code>position: absolute</code> to accomplish this. Set the parent to <code>position: relative</code>, and then use <code>position: absolute</code> for the child element.</p>
+<p>Setting <code>position: relative</code> does not affect the positioning of elements in normal flow unless you add offsets, but does cause those elements to be considered to be positioned. As you may remember, absolutely positioned elements are positioned relative to their first positioned ancestor in the HTML markup, so this in effect creates a new top / bottom / left / right zero point for the absolutely positioned box.</p>
+<p><em>Negative margins</em>. Margins in CSS can be negative; typically this feature is not very useful because it is hard to use correctly when the elements in question have a size that is not fixed. However, it can be useful for doing things that would otherwise be difficult. For example, if you actually want an element to overflow - such as the image carousel navigation buttons - setting a fixed negative margin can be used to intentionally cause overflow. Another prominent use case is for centering in old versions of IE, as you will see later in this chapter.</p>
+<p><em>Transforms</em>. CSS 3 introduces a <code>transform: translate()</code> method which allows elements to be positioned using units that are relative to their own width and height. This can be a viable alternative to using negative margins. While I haven't discussed it here, it worth learning a bit about <code>transform: translate()</code>: specifically, it allows for translations to be expressed <em>as a percentage of the current box</em> - rather than as a percentage of the parent box as is typical in CSS. For example, <code>transform: translateX(-50%)</code> will move the current box to the left by half of its width - something that would be impossible to do with negative margins for boxes that do not have a fixed, predetermined width.</p>
+<p><em>margin: auto</em>. Knowing the two cases where setting <code>margin: auto</code> works is useful, since this allows you to make use of the builtin layouting algorithms for centering. Do you remember what the two cases are where <code>margin: auto</code> causes centering and what their prerequisites are?</p>
+<div class="spoiler-container"><input type="checkbox" class="spoiler" id="spoiler-29"><label for="spoiler-29">Show answer</label><div class="spoiler-content"><ul class="list">
+<li><code>margin-left: auto</code> and <code>margin-right: auto</code> on a block-level element causes it be horizontally centered within a block formatting context. You need to set the <code>width</code> of the element for this to work.</li>
+<li><code>margin: auto</code> on a <code>position: absolute</code> box will center it horizontally and vertically. You need to set both <code>width</code> and <code>height</code> as well as set all the offsets (<code>top</code>, <code>left</code>, <code>bottom</code>, <code>right</code>) to <code>0</code> for this to work.</li>
+</ul>
+</div></div><p><em>Positioning with constraints</em>. There are many interesting things that you can do with <code>position: absolute</code> elements as well as the <code>width</code> of <code>display: block</code> elements. For absolutely positioned elements, it is possible to trigger a constraint-based size calculation in both the horizontal and vertical axes; for <code>display: block</code> elements this only works for horizontal sizing.</p>
+<p>For example, let's say you want to position a box in on the left or right side of a parent box while keeping it centered vertically. This could, for example, be the left and right navigation buttons on an image carousel. To accomplish this, you could set the parent to <code>position: relative</code>, and then use something like this:</p>
+<div class="snippet-container"><div class="css"><pre class="hljs"><code><span class="hljs-class">.parent</span> <span class="hljs-rules">{
+  <span class="hljs-rule"><span class="hljs-attribute">position</span>:<span class="hljs-value"> relative</span></span>;
+  <span class="hljs-rule"><span class="hljs-attribute">width</span>:<span class="hljs-value"> <span class="hljs-number">80%</span></span></span>;
+  <span class="hljs-rule"><span class="hljs-attribute">height</span>:<span class="hljs-value"> <span class="hljs-number">80%</span></span></span>;
+  <span class="hljs-rule"><span class="hljs-attribute">margin</span>:<span class="hljs-value"> <span class="hljs-number">0</span> <span class="hljs-number">40px</span></span></span>;
+}</span>
+<span class="hljs-class">.previous</span>, <span class="hljs-class">.next</span> <span class="hljs-rules">{
+  <span class="hljs-rule"><span class="hljs-attribute">position</span>:<span class="hljs-value"> absolute</span></span>;
+  <span class="hljs-rule"><span class="hljs-attribute">width</span>:<span class="hljs-value"> <span class="hljs-number">30px</span></span></span>;
+  <span class="hljs-rule"><span class="hljs-attribute">height</span>:<span class="hljs-value"> <span class="hljs-number">20px</span></span></span>;
+  <span class="hljs-rule"><span class="hljs-attribute">top</span>:<span class="hljs-value"> <span class="hljs-number">0</span></span></span>;
+  <span class="hljs-rule"><span class="hljs-attribute">bottom</span>:<span class="hljs-value"> <span class="hljs-number">0</span></span></span>;
+  <span class="hljs-rule"><span class="hljs-attribute">margin</span>:<span class="hljs-value"> auto</span></span>;
+}</span>
+<span class="hljs-class">.previous</span> <span class="hljs-rules">{
+  <span class="hljs-rule"><span class="hljs-attribute">left</span>:<span class="hljs-value"> <span class="hljs-number">0</span></span></span>;
+  <span class="hljs-rule"><span class="hljs-attribute">margin-left</span>:<span class="hljs-value"> -<span class="hljs-number">15px</span></span></span>;
+}</span>
+<span class="hljs-class">.next</span> <span class="hljs-rules">{
+  <span class="hljs-rule"><span class="hljs-attribute">right</span>:<span class="hljs-value"> <span class="hljs-number">0</span></span></span>;
+  <span class="hljs-rule"><span class="hljs-attribute">margin-right</span>:<span class="hljs-value"> -<span class="hljs-number">15px</span></span></span>;
+}</span>
+</code></pre></div><div class="html"><pre class="hljs"><code><span class="hljs-tag">&lt;<span class="hljs-title">div</span> <span class="hljs-attribute">class</span>=<span class="hljs-value">"parent blue"</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-title">div</span> <span class="hljs-attribute">class</span>=<span class="hljs-value">"previous green"</span>&gt;</span>prev<span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-title">div</span> <span class="hljs-attribute">class</span>=<span class="hljs-value">"next red"</span>&gt;</span>next<span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>
+</code></pre></div><div class="result"><iframe src="./5. CSS layout_ tricks and layout techniques_files/saved_resource.html"></iframe></div></div><p>On the vertical axis, <code>top: 0</code>, <code>bottom: 0</code>, <code>margin-top: auto</code>, <code>margin-bottom: auto</code> combine to trigger centering (as described in the box model chapter). On the horizontal axis, for the <code>.previous</code> div, <code>left: 0</code>, <code>right: auto</code>, <code>margin-right: auto</code> and <code>margin-left: -15px</code> (or <code>auto</code>) cause the box to be positioned at the left edge of the parent. The <code>-15px</code> negative margin (half the width) places the box neatly on top of the box. The same rules apply to the <code>.next</code> div (using <code>right: 0</code> instead).</p>
+<h2 id="float-based-grids-how-css-grid-frameworks-work"><a class="header-link" href="http://book.mixu.net/css/5-tricks.html#float-based-grids-how-css-grid-frameworks-work"></a>Float-based grids: how CSS grid frameworks work</h2>
+<p>Grid layout frameworks are a versatile tool for modern layout. They allow you to split any content area into a set of columns while allowing the layout to adapt to mobile viewport sizes.</p>
+<p>Rather than using floats to position elements to the left or right of a single column, grid frameworks use multiple floats that are sized appropriately to subdivide a space into columns.</p>
+<p>Columns based on floats have many good properties:</p>
+<ul class="list">
+<li>they work as expected for left and right aligned content, that is, columns align with each other and right-aligned columns are aligned to the right side</li>
+<li>using a fixed set of percentage widths, any available space can be divided into subcolumns</li>
+</ul>
+<p>Grid frameworks like Bootstrap typically use a couple of key properties and techniques. First, setting <code>box-sizing: border-box</code> makes accounting for padding much easier.</p>
+<p>Next, grid frameworks use four techniques to achieve their behavior:</p>
+<p><em>Floats</em> The columns themselves are simply <code>float: left</code> divs. Floats can be used to position boxes to the left and right edges of their container box. For grid frameworks, they are useful since floats are always stacked on the left side and can be set to have to occupy a particular percentage of the parent width.</p>
+<p><em>Percentage-based width</em>. The grid columns have a <code>width</code> value defined as a percentage of the parent box. The framework ensures that the widths add up to <code>100%</code>, taking into account issues that can arise with rounding. This means that the columns will always fit onto a single row in the grid framework and take up some divisor of the total width.</p>
+<p>For example, in a 12-column layout, a 1-column float will have <code>1/12</code> of the available width (as a percentage) assigned to it. Placing a 4-column float with an 8-column float allows for a 33%:66% split of the available space.</p>
+<p><em>Relative positioning</em>. The grid columns typically have <code>position: relative</code> as a default to make them act as the reference point for any absolutely positioned content.</p>
+<p><em>Grid row clearing</em>. In order to contain and clear floats, grid rows either establish a new formatting context, or alternatively use a clearfix.</p>
+<p><em>Clearfix</em>. Do you remember what a clearfix is, and why the clearfix technique is necessary?</p>
+<div class="spoiler-container"><input type="checkbox" class="spoiler" id="spoiler-30"><label for="spoiler-30">Show answer</label><div class="spoiler-content"><p>The clearfix is a small piece of CSS that is used by many developers who work with floats. Over the years, there have been several different versions of the clearfix - the modern versions are less terrible since they contain fewer old, IE-specific fixes.</p>
+<p>A clearfix combines several desirable properties into one class:</p>
+<ul class="list">
+<li>it prevents the floats within the clearfixed parent element from affecting line boxes in other elements that follow the clearfixed element</li>
+<li>it causes the floats within the clearfixed parent element to be taken into account when calculating that element's height</li>
+</ul>
+</div></div><p>Can you describe one method for clearfix? If not, make sure you <a href="http://book.mixu.net/css/1-positioning.html#the-clearfix">review the section on clearfix in chapter 1</a>.</p>
+<p><em>Creating formatting contexts</em>. Creating a new formatting context can be a powerful way to control how floats interact with the rest of the page. Do you remember what a formatting context does?</p>
+<div class="spoiler-container"><input type="checkbox" class="spoiler" id="spoiler-31"><label for="spoiler-31">Show answer</label><div class="spoiler-content"><p>A new formatting context:</p>
+<ul class="list">
+<li>contains floats: floats only interact with elements in the same formatting context</li>
+<li>interacts with floats as a unit: that is, a block that establishes a formatting context is placed either adjacent to floating boxes, or cleared below them if it does not fit; the floats outside the formatting context cannot affect the content of the box that establishes a new formatting context</li>
+<li>prevents margins from collapsing between the box establishing a formatting context and its parent</li>
+</ul>
+</div></div><p>Can you describe one method for establishing a new formatting context? If not, review <a href="https://developer.mozilla.org/en-US/docs/Web/Guide/CSS/Block_formatting_context">this page on formatting context in MDN</a>, and consider taking another look at <a href="http://book.mixu.net/css/1-positioning.html">chapter 1</a>.</p>
+<p>Let's create our own rudimentary grid framework to demonstrate how these techniques work together. The example below illustrates:</p>
+<div class="snippet-container"><div class="css"><pre class="hljs"><code>* <span class="hljs-rules">{ <span class="hljs-rule"><span class="hljs-attribute">box-sizing</span>:<span class="hljs-value"> border-box</span></span>; }</span>
+<span class="hljs-class">.row</span><span class="hljs-pseudo">:after</span> <span class="hljs-rules">{
+  <span class="hljs-rule"><span class="hljs-attribute">content</span>:<span class="hljs-value"> <span class="hljs-string">""</span></span></span>;
+  <span class="hljs-rule"><span class="hljs-attribute">display</span>:<span class="hljs-value"> table</span></span>;
+  <span class="hljs-rule"><span class="hljs-attribute">clear</span>:<span class="hljs-value"> both</span></span>;
+}</span>
+<span class="hljs-class">.column-4</span>, <span class="hljs-class">.column-8</span> <span class="hljs-rules">{
+  <span class="hljs-rule"><span class="hljs-attribute">float</span>:<span class="hljs-value"> left</span></span>;
+  <span class="hljs-rule"><span class="hljs-attribute">position</span>:<span class="hljs-value"> relative</span></span>;
+}</span>
+<span class="hljs-class">.column-4</span> <span class="hljs-rules">{
+  <span class="hljs-rule"><span class="hljs-attribute">width</span>:<span class="hljs-value"> <span class="hljs-number">33.3333%</span></span></span>;
+}</span>
+<span class="hljs-class">.column-8</span> <span class="hljs-rules">{
+  <span class="hljs-rule"><span class="hljs-attribute">width</span>:<span class="hljs-value"> <span class="hljs-number">66.6667%</span></span></span>;
+}</span>
+</code></pre></div><div class="html"><pre class="hljs"><code><span class="hljs-tag">&lt;<span class="hljs-title">div</span> <span class="hljs-attribute">class</span>=<span class="hljs-value">"row"</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-title">div</span> <span class="hljs-attribute">class</span>=<span class="hljs-value">"column-4 blue"</span>&gt;</span>4-col<span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-title">div</span> <span class="hljs-attribute">class</span>=<span class="hljs-value">"column-8 green"</span>&gt;</span>8-col<span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-title">div</span> <span class="hljs-attribute">class</span>=<span class="hljs-value">"row"</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-title">div</span> <span class="hljs-attribute">class</span>=<span class="hljs-value">"column-4 blue"</span>&gt;</span>4-col<span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-title">div</span> <span class="hljs-attribute">class</span>=<span class="hljs-value">"column-4 green"</span>&gt;</span>4-col<span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-title">div</span> <span class="hljs-attribute">class</span>=<span class="hljs-value">"column-4 orange"</span>&gt;</span>4-col<span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>
+</code></pre></div><div class="result"><iframe src="./5. CSS layout_ tricks and layout techniques_files/saved_resource(1).html"></iframe></div></div><p>In order to make this adaptive to different sizes, the rows can have defined transition points where they switch to a different size using media queries. For small screen sizes, you'd want to change the columns to a more basic sequential <code>display: block</code> layout with <code>float: none</code>.</p>
+<p>Of course, I would recommend using a more battle-tested grid framework, but this basic functionality covers the core of what a grid framework does. It might be informative to take a look at how a framework like <a href="http://getbootstrap.com/">Bootstrap</a> implements grids for more details.</p>
+<h2 id="techniques-for-horizontal-and-vertical-centering-in-css"><a class="header-link" href="http://book.mixu.net/css/5-tricks.html#techniques-for-horizontal-and-vertical-centering-in-css"></a>Techniques for horizontal and vertical centering in CSS</h2>
+<p>Horizontal and vertical centering in CSS is somewhat complicated. There are many different techniques which have different requirements and tradeoffs. Take a look at shshaw's <a href="http://codepen.io/shshaw/full/gEiDt">codepen resource on centering</a> for additional examples (although his explanation of why his preferred technique works is overly complicated, since <code>position: absolute</code> boxes are simply <a href="http://book.mixu.net/css/2-box-model.html#absolutely-positioned-non-replaced-elements">sized in one step using the constraint-based algorithm</a> depending on whether offsets, dimensions and margins are defined; there is no five step process here).</p>
+<p>In this section, I will demonstrate techniques for horizontal and vertical centering and ask you to think about how they work and what their benefits and disadvantages are.</p>
+<p>I'll start by covering three techniques that allow you to center items on either the horizontal or vertical axis, but not both.</p>
+<p><em>Horizontally centering block-level elements in normal flow</em>. You can trigger horizontal centering on block-level elements like this:</p>
+<div class="snippet-container"><div class="css"><pre class="hljs"><code><span class="hljs-class">.block-center</span> <span class="hljs-rules">{
+  <span class="hljs-rule"><span class="hljs-attribute">display</span>:<span class="hljs-value"> block</span></span>;
+  <span class="hljs-rule"><span class="hljs-attribute">width</span>:<span class="hljs-value"> <span class="hljs-number">30px</span></span></span>;
+  <span class="hljs-rule"><span class="hljs-attribute">margin-left</span>:<span class="hljs-value"> auto</span></span>;
+  <span class="hljs-rule"><span class="hljs-attribute">margin-right</span>:<span class="hljs-value"> auto</span></span>;
+}</span>
+</code></pre></div><div class="html"><pre class="hljs"><code><span class="hljs-tag">&lt;<span class="hljs-title">div</span> <span class="hljs-attribute">class</span>=<span class="hljs-value">"blue"</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-title">div</span> <span class="hljs-attribute">class</span>=<span class="hljs-value">"block-center green"</span>&gt;</span>Centered<span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>
+</code></pre></div><div class="result"><iframe src="./5. CSS layout_ tricks and layout techniques_files/saved_resource(2).html"></iframe></div></div><p>Can you name a potential disadvantage to this approach?</p>
+<div class="spoiler-container"><input type="checkbox" class="spoiler" id="spoiler-32"><label for="spoiler-32">Show answer</label><div class="spoiler-content"><p>You need to specify the width of the block explicitly for the centering to take place. For example, in the example above, the text overflows a little since I didn't get the width exactly correct.</p>
+</div></div><p><em>Horizontally centering inline-level elements within line boxes</em>. The <code>text-align</code> property allows inline-level elements to be centered horizontally.</p>
+<div class="snippet-container"><div class="css"><pre class="hljs"><code><span class="hljs-class">.text-align-center</span> <span class="hljs-rules">{
+  <span class="hljs-rule"><span class="hljs-attribute">text-align</span>:<span class="hljs-value"> center</span></span>;
+}</span>
+</code></pre></div><div class="html"><pre class="hljs"><code><span class="hljs-tag">&lt;<span class="hljs-title">div</span> <span class="hljs-attribute">class</span>=<span class="hljs-value">"text-align-center blue"</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-title">span</span> <span class="hljs-attribute">class</span>=<span class="hljs-value">"green"</span>&gt;</span>Centered<span class="hljs-tag">&lt;/<span class="hljs-title">span</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>
+</code></pre></div><div class="result"><iframe src="./5. CSS layout_ tricks and layout techniques_files/saved_resource(3).html"></iframe></div></div><p>What are some potential caveats to this approach?</p>
+<div class="spoiler-container"><input type="checkbox" class="spoiler" id="spoiler-33"><label for="spoiler-33">Show answer</label><div class="spoiler-content"><p>Long lines of text will wrap onto multiple line boxes in an inline formatting context, and centering is only applied after the lines have been broken up. This is the desired behavior for text, but if you are centering non-text items you may see undesired behavior when the containing element is very small and items are broken up onto multiple line boxes.</p>
+</div></div><p><em>Vertically centering inline-block elements</em> The <code>vertical-align</code> property applies to inline-level elements and allows you to control the vertical alignment within the inline formatting context.</p>
+<div class="snippet-container"><div class="css"><pre class="hljs"><code><span class="hljs-class">.valign-center</span> <span class="hljs-rules">{
+  <span class="hljs-rule"><span class="hljs-attribute">vertical-align</span>:<span class="hljs-value"> middle</span></span>;
+  <span class="hljs-rule"><span class="hljs-attribute">height</span>:<span class="hljs-value"> <span class="hljs-number">100px</span></span></span>;
+}</span>
+</code></pre></div><div class="html"><pre class="hljs"><code><span class="hljs-tag">&lt;<span class="hljs-title">div</span> <span class="hljs-attribute">class</span>=<span class="hljs-value">"valign-center blue"</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-title">span</span> <span class="hljs-attribute">class</span>=<span class="hljs-value">"green"</span>&gt;</span>Centered<span class="hljs-tag">&lt;/<span class="hljs-title">span</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>
+</code></pre></div><div class="result"><iframe src="./5. CSS layout_ tricks and layout techniques_files/saved_resource(4).html"></iframe></div></div><p>Why does setting <code>vertical-align: middle</code> not cause the single inline-level element to be vertically centered (as shown above)?</p>
+<div class="spoiler-container"><input type="checkbox" class="spoiler" id="spoiler-34"><label for="spoiler-34">Show answer</label><div class="spoiler-content"><p>Inline-level content is first split onto line boxes, which are positioned simply starting from the top of the container that establishes the formatting context.</p>
+<p><code>vertical-align: middle</code> only affects the relative alignment of inline-level blocks within the same line box. The height of the line box is determined by its contents. Since there is only one item, the height of the line box and the height of the item match exactly. The end result is that the line box is positioned at the top of the parent container.</p>
+<p>In flexbox, you can separately control the alignment of flex lines (which are conceptually very similar to line boxes); but for inline formatting contexts you can only control the alignment of the items and not the alignment of lines.</p>
+</div></div><p>Can you think of two ways to solve the problem mentioned in the answer above?</p>
+<div class="spoiler-container"><input type="checkbox" class="spoiler" id="spoiler-35"><label for="spoiler-35">Show answer</label><div class="spoiler-content"><p>Here are two ways to make the example above work:</p>
+<ol class="list">
+<li>explicitly set <code>line-height</code> to an absolute value in pixels</li>
+<li>use a small inline-block pseudo-element to force the current line box to expand to 100% of the parent height</li>
+</ol>
+<p>For solution 1, you cannot set <code>line-height</code> to <code>100%</code>, because line height is relative to parent font height, not parent container height.</p>
+<p>For solution 2, you need to use an inline-block because normal inline-level boxes do not have a <code>height</code> property and hence cannot reference the parent height. A pseudo-element is preferable to a real element because it requires fewer changes in markup.</p>
+</div></div><h2 id="horizontal-and-vertical-centering"><a class="header-link" href="http://book.mixu.net/css/5-tricks.html#horizontal-and-vertical-centering"></a>Horizontal and vertical centering</h2>
+<p>The only problem with the techniques above - which rely on normal flow - is that they cannot be easily extended to also enable vertical centering.</p>
+<p>In this section, I'll discuss a couple of techniques that allow you to achieve both vertical and horizontal centering:</p>
+<ul class="list">
+<li><code>position: absolute</code> constraint based centering (IE8+)</li>
+<li><code>position: absolute</code> negative margin based centering (all browsers)</li>
+<li>flexbox centering (IE10+)</li>
+</ul>
+<p>These cover the gamut of techniques that work on all browsers--even on IE. shshaw's <a href="http://codepen.io/shshaw/full/gEiDt">codepen resource on centering</a> covers several additional techniques.</p>
+<p><em>position: absolute constraint based centering</em>: First, a technique that works on all modern browsers (IE8+), and one that is probably a reasonable default approach unless you need to support ancient IE.</p>
+<div class="snippet-container"><div class="css"><pre class="hljs"><code>* <span class="hljs-rules">{ <span class="hljs-rule"><span class="hljs-attribute">box-sizing</span>:<span class="hljs-value"> border-box</span></span>; }</span>
+<span class="hljs-class">.center-container</span> <span class="hljs-rules">{
+  <span class="hljs-rule"><span class="hljs-attribute">position</span>:<span class="hljs-value"> relative</span></span>;
+  <span class="hljs-rule"><span class="hljs-attribute">height</span>:<span class="hljs-value"> <span class="hljs-number">100px</span></span></span>;
+  <span class="hljs-rule"><span class="hljs-attribute">width</span>:<span class="hljs-value"> <span class="hljs-number">200px</span></span></span>;
+}</span>
+<span class="hljs-class">.dialog</span> <span class="hljs-rules">{
+  <span class="hljs-rule"><span class="hljs-attribute">height</span>:<span class="hljs-value"> <span class="hljs-number">40%</span></span></span>;
+  <span class="hljs-rule"><span class="hljs-attribute">width</span>:<span class="hljs-value"> <span class="hljs-number">50%</span></span></span>;
+}</span>
+<span class="hljs-class">.absolute-center</span> <span class="hljs-rules">{
+  <span class="hljs-rule"><span class="hljs-attribute">margin</span>:<span class="hljs-value"> auto</span></span>;
+  <span class="hljs-rule"><span class="hljs-attribute">position</span>:<span class="hljs-value"> absolute</span></span>;
+  <span class="hljs-rule"><span class="hljs-attribute">top</span>:<span class="hljs-value"> <span class="hljs-number">0</span></span></span>; <span class="hljs-rule"><span class="hljs-attribute">left</span>:<span class="hljs-value"> <span class="hljs-number">0</span></span></span>; <span class="hljs-rule"><span class="hljs-attribute">bottom</span>:<span class="hljs-value"> <span class="hljs-number">0</span></span></span>; <span class="hljs-rule"><span class="hljs-attribute">right</span>:<span class="hljs-value"> <span class="hljs-number">0</span></span></span>;
+}</span>
+</code></pre></div><div class="html"><pre class="hljs"><code><span class="hljs-tag">&lt;<span class="hljs-title">div</span> <span class="hljs-attribute">class</span>=<span class="hljs-value">"center-container blue"</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-title">div</span> <span class="hljs-attribute">class</span>=<span class="hljs-value">"dialog absolute-center green"</span>&gt;</span>Centered<span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>
+</code></pre></div><div class="result"><iframe src="./5. CSS layout_ tricks and layout techniques_files/saved_resource(5).html"></iframe></div></div><p>How does the absolute centering technique work?</p>
+<div class="spoiler-container"><input type="checkbox" class="spoiler" id="spoiler-36"><label for="spoiler-36">Show answer</label><div class="spoiler-content"><p><code>position: relative</code> on the parent container causes it to be considered to be explicitly positioned, but since no offsets are specified, it is positioned just like it would be in normal flow.</p>
+<p>Setting <code>position: absolute</code> on the dialog causes it to be taken out of normal flow and positioned absolutely.</p>
+<p>Normally, in the absolute positioning scheme, <code>margin: auto</code> is interpreted as <code>0</code>. However, when the content dimensions and the offsets are defined, <code>margin: auto</code> uses the constraint-based approach to allocate the remaining space to the margins (with the added constraint that the margins have the same value), causing the block to be centered. This is done for both the horizontal and vertical margins.</p>
+</div></div><p>What are some potential disadvantages to this approach?</p>
+<div class="spoiler-container"><input type="checkbox" class="spoiler" id="spoiler-37"><label for="spoiler-37">Show answer</label><div class="spoiler-content"><p>You need to specify both the width and the height in order to center both vertically and horizontally. You may be able to work around those issues using max-width/min-width/max-height/min-height and using percentage-based dimensions. Also, this only works on IE8 and up.</p>
+</div></div><p>If you wanted to align the layer to one of the corners (e.g. top, left, bottom, right), how would you change the markup?</p>
+<div class="spoiler-container"><input type="checkbox" class="spoiler" id="spoiler-38"><label for="spoiler-38">Show answer</label><div class="spoiler-content"><p>Setting one of the offsets to <code>auto</code> will cause that value to be calculated based on the box model constraints.</p>
+</div></div><p><em>position: absolute negative margin based centering</em>. The only good thing about the negative margins centering technique is that it works on ancient versions of IE.</p>
+<div class="snippet-container"><div class="css"><pre class="hljs"><code>* <span class="hljs-rules">{ <span class="hljs-rule"><span class="hljs-attribute">box-sizing</span>:<span class="hljs-value"> border-box</span></span>; }</span>
+<span class="hljs-class">.center-container</span> <span class="hljs-rules">{
+  <span class="hljs-rule"><span class="hljs-attribute">position</span>:<span class="hljs-value"> relative</span></span>;
+  <span class="hljs-rule"><span class="hljs-attribute">height</span>:<span class="hljs-value"> <span class="hljs-number">100px</span></span></span>;
+  <span class="hljs-rule"><span class="hljs-attribute">width</span>:<span class="hljs-value"> <span class="hljs-number">200px</span></span></span>;
+}</span>
+<span class="hljs-class">.absolute-center-negative</span> <span class="hljs-rules">{
+  <span class="hljs-rule"><span class="hljs-attribute">position</span>:<span class="hljs-value"> absolute</span></span>;
+  <span class="hljs-rule"><span class="hljs-attribute">top</span>:<span class="hljs-value"> <span class="hljs-number">50%</span></span></span>; <span class="hljs-rule"><span class="hljs-attribute">left</span>:<span class="hljs-value"> <span class="hljs-number">50%</span></span></span>;
+  <span class="hljs-rule"><span class="hljs-attribute">width</span>:<span class="hljs-value"> <span class="hljs-number">100px</span></span></span>;
+  <span class="hljs-rule"><span class="hljs-attribute">margin-left</span>:<span class="hljs-value"> -<span class="hljs-number">50px</span></span></span>; <span class="hljs-comment">/* (width + padding)/2 */</span>
+  <span class="hljs-rule"><span class="hljs-attribute">height</span>:<span class="hljs-value"> <span class="hljs-number">50px</span></span></span>;
+  <span class="hljs-rule"><span class="hljs-attribute">margin-top</span>:<span class="hljs-value"> -<span class="hljs-number">25px</span></span></span>; <span class="hljs-comment">/* (height + padding)/2 */</span>
+}</span>
+</code></pre></div><div class="html"><pre class="hljs"><code><span class="hljs-tag">&lt;<span class="hljs-title">div</span> <span class="hljs-attribute">class</span>=<span class="hljs-value">"center-container blue"</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-title">div</span> <span class="hljs-attribute">class</span>=<span class="hljs-value">"absolute-center-negative green"</span>&gt;</span>Centered<span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>
+</code></pre></div><div class="result"><iframe src="./5. CSS layout_ tricks and layout techniques_files/saved_resource(6).html"></iframe></div></div><p>How does the negative margins technique work?</p>
+<div class="spoiler-container"><input type="checkbox" class="spoiler" id="spoiler-39"><label for="spoiler-39">Show answer</label><div class="spoiler-content"><p><code>position: relative</code> on the parent container causes it to be considered to be explicitly positioned, but since no offsets are specified, it is positioned just like it would be in normal flow.</p>
+<p>Setting <code>position: absolute</code> on the dialog causes it to be taken out of normal flow and positioned absolutely.</p>
+<p>Setting <code>top: 50%</code> and <code>left: 50%</code> causes the absolutely positioned box to be offset 50% of the containing block's height and width (respectively).</p>
+<p>This would merely place the top left corner of the dialog at the center. To move the center of the dialog box to the center of the parent container, negative margins which are half the width/height of the dialog are used.</p>
+</div></div><p>What are some potential disadvantages to this approach?</p>
+<div class="spoiler-container"><input type="checkbox" class="spoiler" id="spoiler-40"><label for="spoiler-40">Show answer</label><div class="spoiler-content"><p>You need to specify both the width and the height in order to center both vertically and horizontally.</p>
+<p>Adjusting the negative margins manually can be painful. However, this is the only <code>position: absolute</code> based technique that works in IE6.</p>
+</div></div><p><em>flexbox based centering</em>: Flexbox based centering is the least surprising way to center items; the properties work as described.</p>
+<div class="snippet-container"><div class="css"><pre class="hljs"><code><span class="hljs-class">.flexbox-center</span> <span class="hljs-rules">{
+  <span class="hljs-rule"><span class="hljs-attribute">display</span>:<span class="hljs-value"> flex</span></span>;
+  <span class="hljs-rule"><span class="hljs-attribute">align-items</span>:<span class="hljs-value"> center</span></span>;
+  <span class="hljs-rule"><span class="hljs-attribute">justify-content</span>:<span class="hljs-value"> center</span></span>;
+  <span class="hljs-rule"><span class="hljs-attribute">height</span>:<span class="hljs-value"> <span class="hljs-number">100px</span></span></span>;
+  <span class="hljs-rule"><span class="hljs-attribute">width</span>:<span class="hljs-value"> <span class="hljs-number">200px</span></span></span>;
+}</span>
+</code></pre></div><div class="html"><pre class="hljs"><code><span class="hljs-tag">&lt;<span class="hljs-title">div</span> <span class="hljs-attribute">class</span>=<span class="hljs-value">"flexbox-center blue"</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-title">div</span> <span class="hljs-attribute">class</span>=<span class="hljs-value">"green"</span>&gt;</span>Centered<span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>
+</code></pre></div><div class="result"><iframe src="./5. CSS layout_ tricks and layout techniques_files/saved_resource(7).html"></iframe></div></div><p>What are some things to keep in mind when using flexbox?</p>
+<div class="spoiler-container"><input type="checkbox" class="spoiler" id="spoiler-41"><label for="spoiler-41">Show answer</label><div class="spoiler-content"><p>First, flexbox is not supported on every browser; and on some older versions it may still require browser-specific prefixes (e.g. <code>display: -webkit-flex;</code>, <code>display: -ms-flexbox</code>).</p>
+<p>Second, the flexbox centering is still line-based. You may want to set <code>flex-wrap: nowrap</code> to avoid issues if you have multiple centered items.</p>
+</div></div><h2 id="box-rendering-and-stacking-context"><a class="header-link" href="http://book.mixu.net/css/5-tricks.html#box-rendering-and-stacking-context"></a>Box rendering and stacking context</h2>
+<p>Finally, to test your knowledge of stacking contexts, I'll ask you to solve this puzzle posed on <a href="http://philipwalton.com/articles/what-no-one-told-you-about-z-index/">Philip Walton's blog</a>. Given the markup below:</p>
+<div class="snippet-container"><div class="css"><pre class="hljs"><code><span class="hljs-class">.red</span>, <span class="hljs-class">.green</span>, <span class="hljs-class">.blue</span> <span class="hljs-rules">{
+  <span class="hljs-rule"><span class="hljs-attribute">position</span>:<span class="hljs-value"> absolute</span></span>;
+  <span class="hljs-rule"><span class="hljs-attribute">width</span>:<span class="hljs-value"> <span class="hljs-number">200px</span></span></span>;
+  <span class="hljs-rule"><span class="hljs-attribute">height</span>:<span class="hljs-value"> <span class="hljs-number">50px</span></span></span>;
+}</span>
+<span class="hljs-class">.red</span> <span class="hljs-rules">{
+  <span class="hljs-rule"><span class="hljs-attribute">z-index</span>:<span class="hljs-value"> <span class="hljs-number">1</span></span></span>;
+}</span>
+<span class="hljs-class">.green</span> <span class="hljs-rules">{
+  <span class="hljs-rule"><span class="hljs-attribute">top</span>:<span class="hljs-value"> <span class="hljs-number">20px</span></span></span>;
+  <span class="hljs-rule"><span class="hljs-attribute">left</span>:<span class="hljs-value"> <span class="hljs-number">20px</span></span></span>;
+}</span>
+<span class="hljs-class">.blue</span> <span class="hljs-rules">{
+  <span class="hljs-rule"><span class="hljs-attribute">top</span>:<span class="hljs-value"> <span class="hljs-number">40px</span></span></span>;
+  <span class="hljs-rule"><span class="hljs-attribute">left</span>:<span class="hljs-value"> <span class="hljs-number">40px</span></span></span>;
+}</span>
+</code></pre></div><div class="html"><pre class="hljs"><code><span class="hljs-tag">&lt;<span class="hljs-title">div</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-title">div</span> <span class="hljs-attribute">class</span>=<span class="hljs-value">"red"</span>&gt;</span>Red<span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-title">div</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-title">div</span> <span class="hljs-attribute">class</span>=<span class="hljs-value">"green"</span>&gt;</span>Green<span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-title">div</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-title">div</span> <span class="hljs-attribute">class</span>=<span class="hljs-value">"blue"</span>&gt;</span>Blue<span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-title">div</span>&gt;</span>
+</code></pre></div><div class="result"><iframe src="./5. CSS layout_ tricks and layout techniques_files/saved_resource(8).html"></iframe></div></div><p>Change the CSS to show the red div behind the green and blue divs. You may NOT alter:</p>
+<ol class="list">
+<li>the HTML,</li>
+<li>the z-index property of any element or</li>
+<li>the position property of any element</li>
+</ol>
+<p>Can you figure out a way to solve this, based on what you know about stacking contexts?</p>
+<div class="spoiler-container"><input type="checkbox" class="spoiler" id="spoiler-42"><label for="spoiler-42">Show answer</label><div class="spoiler-content"><p>Force the divs to create new stacking contexts.</p>
+<p><code>z-index</code> values only affect relative stacking order within a single stacking context. If the divs are in different stacking contexts, and the z-index order is not specified, the divs are rendered in markup order from back to front, so that red is behind green and green is behind blue.</p>
+<p>You can do this by adding one of several properties that trigger a new stacking context, such as <code>div { opacity: 0.99; }</code> or <code>div {transform: translateX(0); }</code>.</p>
+</div></div><h2 id="thanks-"><a class="header-link" href="http://book.mixu.net/css/5-tricks.html#thanks-"></a>Thanks!</h2>
+<p>Thank you for reading this far!</p>
+<p>If you liked the book, follow me on <a href="https://github.com/mixu/">GitHub</a> (or <a href="http://twitter.com/mikitotakada">Twitter</a>). I love seeing that I've had some kind of positive impact. And if you end up writing about CSS in a blog post or elsewhere, feel free to link back - every link helps :).</p>
+<p>If you notice that a layout-related technique that you would like to see covered is missing from the book, feel free to <a href="https://github.com/mixu/cssbook/issues">file an issue on GitHub</a>. It may take me a while to get back to writing a second edition, but in the meanwhile having someone mention additional techniques in the form of an issue can be helpful for other readers of the book and I will use the issues to improve the book further the next time I am working on it.</p>
+<p>Similarly, if you have experienced an edge case, bug or interaction between different CSS properties that you feel is worth knowing about, feel free to <a href="https://github.com/mixu/cssbook/issues">file an issue on GitHub</a>. Many of the examples in the book come from my own work and having additional real-world issues listed will help other readers and will let me find more interesting topics to cover in a future edition. There are many practical pitfalls with CSS, and while I can teach you how the spec says things should work, there is no central repository for the problems that real browsers - sometimes even working as the spec intended - can cause in the real world.</p>
+<p>Also, check out the next chapter - it contains an index to the topics covered in here, which can be helpful when you need to brush up on a specific property or concept.</p>
+<p>I've also written about a bunch of other topics such as distributed systems and Node.js; you can find my long form writing at <a href="http://book.mixu.net/">book.mixu.net</a>.</p>
+
+         <div id="bottom_navi">
+              <a href="http://book.mixu.net/css/4-flexbox.html"> &lt; &lt; Previous Chapter</a> |
+              <a href="http://book.mixu.net/css/reference.html">Next Chapter &gt; &gt;</a>
+         </div>
+        </div>
+      </div>
+    </div>
+    <div id="sidebar">
+      <h3><a href="http://book.mixu.net/css/index.html">Home</a></h3>
+      <h3><a href="http://book.mixu.net/css/single-page.html">Single page HTML</a></h3>
+        <h3><a href="http://book.mixu.net/css/4-flexbox.html">Previous Chapter</a></h3>
+        <h3><a href="http://book.mixu.net/css/reference.html">Next Chapter</a></h3>
+
+      <h3>Other books</h3>
+        <ul class="spaced">
+          <li>
+            <a href="http://book.mixu.net/distsys/">Distributed systems: for fun and profit</a> (2013)
+          </li>
+          <li>
+            <a href="http://singlepageappbook.com/">Single page apps in depth</a> (2013)
+          </li>
+          <li>
+            <a href="http://book.mixu.net/node/">Mixu's Node book</a> (2012)
+          </li>
+        </ul>
+    </div>
+    <div class="clear">
+    </div>
+
+    <div id="footer">
+      <p>Written by <a href="http://mixu.net/">Mikito Takada</a>.</p>
+    </div>
+  </div>
+
+
+</body></html>
