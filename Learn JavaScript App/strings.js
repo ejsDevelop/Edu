@@ -18,7 +18,7 @@ console.log(skipFirstCharacter("Iamsterdam"));
 
 
 
-//App Solution
+//App 2Solution
 function skipFirstCharacter(name){
     return name.substring(1);
 }
