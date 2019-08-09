@@ -8,3 +8,13 @@ const myString = "Erik"
 
 let myArray = ['Fred', 'Julie', 12]
 
+// on the line below, declare a variable named myObject,
+// then assign it to an object literal with 3 properties
+
+let myObject = {
+  age: '47',
+  collegeYears: 5,
+  male: true
+  
+};
+
